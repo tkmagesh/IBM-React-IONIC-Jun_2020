@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React Intro</title>
+    <script src="react.development.js"></script>
+    <script src="react-dom.development.js"></script>
+    <script src="babel.min.js"></script>
+    <script type="text/babel">
+        class AppComponent extends React.Component{
+            counter = 0;
+            //presenation
+            render = () => {
+                return(
+                    <div>
+                        <h1>Welcome to React.js!</h1>
+                        <hr/>
+                        <section>
+                            <span>Counter : </span>
+                            <span>{this.counter}</span>
+                        </section>
+                        <Introduction/>
+                        <section>
+                            <h3>Advantages</h3>
+                            <ol>
+                                <li>Simplicity</li>
+                                <li>Declarative</li>
+                            </ol>
+                        </section>
+                    </div>
+                )
+            }
+        }  
+
+        class Introduction extends React.Component{
+            render = () => {
+                return(
+                    <section>
+                        <h3>Introduction</h3>
+                        <p>Aliquip laborum nostrud laboris ipsum do. Ullamco eu excepteur excepteur do. Minim anim id deserunt ut cillum officia veniam irure. Adipisicing do est ad quis commodo commodo occaecat fugiat labore aliqua magna consectetur magna exercitation. Commodo proident dolor ipsum laboris Lorem ipsum nostrud.</p>
+                        <p>Laborum enim mollit enim do elit velit deserunt incididunt sint velit. Aute anim in occaecat velit do nostrud. Quis minim et commodo aliqua aute amet cillum veniam.</p>
+                        <p>Occaecat in do deserunt nostrud ut adipisicing. Aliqua dolore ea nisi aliquip aute esse occaecat culpa aute. Duis sint tempor non exercitation ex consectetur deserunt eiusmod dolore. Labore culpa exercitation labore irure nulla nisi voluptate dolore est in fugiat dolore exercitation anim.</p>
+                    </section>
+                )
+            }
+        }
+
+        /* ReactDOM.render(React.createElement(AppComponent) 
+            , document.getElementById('root') ); */
+
+        ReactDOM.render(<AppComponent />
+            , document.getElementById('root'));
+        
+    </script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>

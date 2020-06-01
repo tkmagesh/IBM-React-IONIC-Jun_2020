@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React Intro</title>
+    <script src="react.development.js"></script>
+    <script src="react-dom.development.js"></script>
+    <script src="babel.min.js"></script>
+    <script type="text/babel">
+        window.addEventListener('load', onDocumentLoaded);
+        var counter = 0;
+        function onDocumentLoaded(){
+            var btnRender = document.getElementById('btnRender');
+            btnRender.addEventListener('click', onBtnRenderClick);
+        }
+
+        function onBtnRenderClick(){
+            ++counter;
+            var appEle = (
+                <div>
+                    <h1>Welcome to React.js!</h1>
+                    <hr/>
+                    <section>
+                        <span> Counter : </span>
+                        <span>{counter}</span>
+                    </section>
+                    <section>
+                        <h3>Introduction - {counter}</h3>
+                        <p>Aliquip laborum nostrud laboris ipsum do. Ullamco eu excepteur excepteur do. Minim anim id deserunt ut cillum officia veniam irure. Adipisicing do est ad quis commodo commodo occaecat fugiat labore aliqua magna consectetur magna exercitation. Commodo proident dolor ipsum laboris Lorem ipsum nostrud.</p>
+                        <p>Laborum enim mollit enim do elit velit deserunt incididunt sint velit. Aute anim in occaecat velit do nostrud. Quis minim et commodo aliqua aute amet cillum veniam.</p>
+                    </section>
+                    <section>
+                        <h3>Advantages</h3>
+                        <ol>
+                            <li>Simplicity</li>
+                            <li>Declarative</li>
+                        </ol>
+                    </section>
+                </div>
+            )
+            ReactDOM.render(appEle, document.getElementById('root'));
+
+        }
+
+        
+    </script>
+</head>
+<body>
+    <input type="button" value="Render" id="btnRender">
+    <div id="root"></div>
+</body>
+</html>

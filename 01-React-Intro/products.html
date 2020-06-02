@@ -15,15 +15,28 @@
     <script src="babel.min.js"></script>
     <script type="text/babel">
         class Products extends React.Component{
+            state = { 
+                productNames : [ ],
+                newProductName : ''
+            };
+
+            onAddNewClick = () => {
+                this.setState({ productNames : [...this.state.productNames, this.state.newProductName ]});
+            }
+
+            onProductNameChange = (evt) => {
+                this.setState({ newProductName : evt.target.value });
+            }
+
             render = () => {
-                const productNames = [ ];
+                const { productNames } = this.state;
                 return(
                     <React.Fragment>
                         <h1>Products</h1>
                         <hr/>
                         <label htmlFor="">Product Name :</label>
-                        <input type="text" name="" id=""/>
-                        <input type="button" value="Add New"/>
+                        <input type="text" onChange={this.onProductNameChange} />
+                        <input type="button" value="Add New" onClick={this.onAddNewClick}/>
                         <ol>
                             { productNames.map((productName, index) =>(<li key={index}>{productName}</li>)) }
                         </ol>
@@ -31,7 +44,19 @@
                 )
             }
         }
-        ReactDOM.render(<Products/>, document.getElementById('root'));
+
+        const ProductsCount = () => (
+            <div>
+                <label>Count : </label>
+                <span> [0] </span>
+            </div>
+        )
+        ReactDOM.render(
+                <div>
+                    <ProductsCount />    
+                    <Products/>
+                </div>
+            , document.getElementById('root'));
     </script>
 </head>
 <body>

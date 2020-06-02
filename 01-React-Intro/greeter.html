@@ -50,9 +50,10 @@
             }
         }
 
+        var x = "Have a good day!";
         ReactDOM.render(
                 <div>
-                    <Greeter  msgTemplate="Have a good day!" />
+                    <Greeter  msgTemplate={x} />
                     <Greeter  msgTemplate="Have a nice day!" />
                 </div>
             , document.getElementById('root'));

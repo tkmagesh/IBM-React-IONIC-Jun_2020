@@ -68,7 +68,7 @@
                             <div className="field">
                                 <input type="button" value="Calculate" onClick={this.onCalculateClick}/>
                             </div>
-                            <SalaryCalculatorResult data={this.state}/>
+                            <SalaryCalculatorResult data={this.state} />
                         </section>
                     </div>
                 )
@@ -106,7 +106,7 @@
         );
         
 
-        class SalaryCalculatorResult extends React.Component{
+        /* class SalaryCalculatorResult extends React.Component{
             render = () => {
                 const { basic, hra, da, tax, salary } = this.props.data;
                 return(
@@ -127,7 +127,29 @@
                     </div>
                 )
             }
-        }
+        } */
+
+        const SalaryCalculatorResult  = ({ data }) => {
+            const { basic, hra, da, tax, salary } = data;
+            return (
+                <div className="field">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>{basic}</td>
+                                <td>{hra}</td>
+                                <td>{da}</td>
+                                <td>{tax}</td>
+                                { 
+                                    salary === 0 ? null : (salary < 10000 ? (<td className="poorSalary">{salary}</td>) : (<td className="goodSalary">{salary}</td>))
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            );
+        };
+        
 
         ReactDOM.render(<SalaryCalculator />, document.getElementById('root'));
     </script>

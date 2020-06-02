@@ -16,14 +16,16 @@
     <script type="text/babel">
         class Products extends React.Component{
             render = () => {
+                const productNames = [ ];
                 return(
                     <React.Fragment>
                         <h1>Products</h1>
                         <hr/>
+                        <label htmlFor="">Product Name :</label>
+                        <input type="text" name="" id=""/>
+                        <input type="button" value="Add New"/>
                         <ol>
-                            <li>Pen</li>
-                            <li>Pencil</li>
-                            <li>Marker</li>
+                            { productNames.map((productName, index) =>(<li key={index}>{productName}</li>)) }
                         </ol>
                     </React.Fragment>
                 )

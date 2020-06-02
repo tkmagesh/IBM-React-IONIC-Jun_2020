@@ -27,8 +27,12 @@
             }
 
             onGreetClick = (evt) => {
-                const newMessage = `Hello ${this.state.userName}, Have a nice day!`;
+                const newMessage = `Hello ${this.state.userName}, ${this.props.msgTemplate}`;
                 this.setState({ message : newMessage });
+            }
+
+            onClearClick = () => {
+                this.setState({ message : '', userName : '' });
             }
             
             render = () => {
@@ -37,16 +41,21 @@
                         <h1>Greeter</h1>
                         <hr/>
                         <label htmlFor="">User Name :</label>
-                        <input type="text" name="" id="" onChange={this.onTextChange} />
+                        <input type="text" onChange={this.onTextChange} value={this.state.userName}/>
                         <input type="button" value="Greet" onClick={this.onGreetClick} />
-                        <input type="button" value="Clear" />
+                        <input type="button" value="Clear" onClick={this.onClearClick} />
                         <div className="highlight">{this.state.message}</div>
                     </div>
                 )
             }
         }
 
-        ReactDOM.render(<Greeter />, document.getElementById('root'));
+        ReactDOM.render(
+                <div>
+                    <Greeter  msgTemplate="Have a good day!" />
+                    <Greeter  msgTemplate="Have a nice day!" />
+                </div>
+            , document.getElementById('root'));
     </script>
 </head>
 <body>

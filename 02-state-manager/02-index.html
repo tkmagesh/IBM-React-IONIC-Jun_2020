@@ -14,7 +14,9 @@
 
         /* 
             1. initial version
+            2. remove the store dependency from the component
         */
+
         function spinnerReducer(currentState = 0, action){
             if (action.type === 'INCREMENT') return currentState + action.payload;
             if (action.type === 'DECREMENT') return currentState - action.payload;
@@ -26,14 +28,14 @@
             state = { delta : 0 };
 
             onIncrementClick = () => {
-                this.props.store.dispatch({ type: 'INCREMENT', payload : this.state.delta });
+                this.props.dispatch({ type: 'INCREMENT', payload : this.state.delta });
             }
             onDecrementClick = () => {
-                this.props.store.dispatch({ type: 'DECREMENT', payload : this.state.delta });
+                this.props.dispatch({ type: 'DECREMENT', payload : this.state.delta });
             }
             render = () => {
                 //const { store } = this.props;
-                const store = this.props.store;
+                const { value } = this.props;
                 return(
                     <React.Fragment>
                         <h1>Spinner</h1>
@@ -42,7 +44,7 @@
                         <input type="number" onChange={ evt => this.setState({ delta : evt.target.valueAsNumber}) }/>
                         <br/>
                         <input type="button" value="Decrement" onClick={this.onDecrementClick}/>
-                        <span> [ {store.getState()} ] </span>
+                        <span> [ {value} ] </span>
                         <input type="button" value="Increment" onClick={this.onIncrementClick}/>
                     </React.Fragment>
                 )
@@ -50,7 +52,8 @@
         }
 
         function renderSpinner(){
-            ReactDOM.render(<Spinner store={store}/>, document.getElementById('root'));
+            var value = store.getState();
+            ReactDOM.render(<Spinner value={value} dispatch={store.dispatch}/>, document.getElementById('root'));
         }
         renderSpinner();
         store.subscribe(renderSpinner);

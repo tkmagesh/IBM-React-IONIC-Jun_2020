@@ -12,25 +12,31 @@
 
     <script type="text/babel">
         function spinnerReducer(currentState = 0, action){
-            if (action.type === 'INCREMENT') return ++currentState;
-            if (action.type === 'DECREMENT') return --currentState;
+            if (action.type === 'INCREMENT') return currentState + action.payload;
+            if (action.type === 'DECREMENT') return currentState - action.payload;
             return currentState;
         }
         var store = StateManager.createStore(spinnerReducer);
 
         class Spinner extends React.Component{
+            state = { delta : 0 };
+
             onIncrementClick = () => {
-                this.props.store.dispatch({ type: 'INCREMENT' });
+                this.props.store.dispatch({ type: 'INCREMENT', payload : this.state.delta });
             }
             onDecrementClick = () => {
-                this.props.store.dispatch({ type: 'DECREMENT' });
+                this.props.store.dispatch({ type: 'DECREMENT', payload : this.state.delta });
             }
             render = () => {
-                const { store } = this.props;
+                //const { store } = this.props;
+                const store = this.props.store;
                 return(
                     <React.Fragment>
                         <h1>Spinner</h1>
                         <hr/>
+                        <label htmlFor="">Delta : </label>
+                        <input type="number" onChange={ evt => this.setState({ delta : evt.target.valueAsNumber}) }/>
+                        <br/>
                         <input type="button" value="Decrement" onClick={this.onDecrementClick}/>
                         <span> [ {store.getState()} ] </span>
                         <input type="button" value="Increment" onClick={this.onIncrementClick}/>
@@ -44,7 +50,7 @@
         }
         renderSpinner();
         store.subscribe(renderSpinner);
-        
+
     </script>
 </head>
 <body>

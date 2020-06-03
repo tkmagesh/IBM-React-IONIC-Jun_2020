@@ -49,6 +49,10 @@
                 var newState = [...currentState, action.payload];
                 return newState;
             }
+            if (action.type === 'REPLACE_BUG'){
+                var newState = currentState.map(bug => bug.id === action.payload.id ? action.payload : bug );
+                return newState;
+            }
             return currentState;
         }
 
@@ -63,6 +67,11 @@
                 }
                 const action = { type : 'ADD_NEW_BUG', payload : newBug };
                 return action;
+            },
+            toggle(bugToToggle){
+                const toggledBug = { ...bugToToggle, isClosed : !bugToToggle.isClosed };
+                const action = { type : 'REPLACE_BUG', payload : toggledBug };
+                return action;
             }
         };
 
@@ -71,14 +80,15 @@
                 newBugName : '' 
             };
             render = () => {
-                const { bugs, addNew } = this.props;
+                const { bugs, addNew, toggle } = this.props;
                 const { newBugName } = this.state;
+                const closedCount = bugs.reduce((result, bug) => bug.isClosed ? ++result : result, 0);
                 return(
                     <React.Fragment>
                         <h1>Bug Tracker</h1>
                         <hr/>
                         <section className="stats">
-                            <span className="closed">1</span>
+                            <span className="closed">{closedCount}</span>
                             <span> / </span>
                             <span>{bugs.length}</span>
                         </section>
@@ -98,18 +108,24 @@
                         </section>
                         <section className="list">
                             <ol>
-                                { bugs.map(bug => (<li key={bug.id}>
-                                    <span className="bugname">{bug.name}</span>
-                                    <div className="datetime">{bug.createdAt.toString()}</div>
-                                    <input type="button" value="Remove" />
-                                </li>))
-                                }
+                                { bugs.map(bug => <BugItem key={bug.id} bug={bug} toggle={toggle}/>) }
                             </ol>
                             <input type="button" value="Remove Closed" />
                         </section>
                     </React.Fragment>
                 )
             }
+        }
+
+        const BugItem = ({bug, toggle}) => {
+            return (
+                <li>
+                    { bug.isClosed ? (<span className="bugname closed" onClick={() => toggle(bug)}>{bug.name}</span>) : (<span className="bugname" onClick={() => toggle(bug)}>{bug.name}</span>)
+                    }
+                    <div className="datetime">{bug.createdAt.toString()}</div>
+                    <input type="button" value="Remove" />
+                </li>
+            );
         }
 
         var store = Redux.createStore(bugsReducer);

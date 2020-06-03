@@ -21,7 +21,9 @@
             };
 
             onAddNewClick = () => {
-                this.setState({ productNames : [...this.state.productNames, this.state.newProductName ]});
+                const newProductNames = [...this.state.productNames, this.state.newProductName ];
+                this.setState({ productNames : newProductNames});
+                this.props.onListChange(newProductNames.length);
             }
 
             onProductNameChange = (evt) => {
@@ -45,17 +47,31 @@
             }
         }
 
-        const ProductsCount = () => (
+        const ProductsCount = ({data}) => (
             <div>
                 <label>Count : </label>
-                <span> [0] </span>
+                <span> [{data}] </span>
             </div>
-        )
+        );
+
+        class App extends React.Component{
+            state = { 
+                count : 0
+            };
+            onListChangeHandler = (count) => {
+                this.setState({count})
+            }
+            render = () => {
+                return(
+                    <div>
+                        <ProductsCount data={this.state.count}/>    
+                        <Products onListChange={this.onListChangeHandler}/>
+                    </div>
+                )
+            }
+        }
         ReactDOM.render(
-                <div>
-                    <ProductsCount />    
-                    <Products/>
-                </div>
+            <App/>    
             , document.getElementById('root'));
     </script>
 </head>

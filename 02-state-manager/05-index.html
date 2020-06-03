@@ -41,11 +41,11 @@
         function bindActionCreators(actionCreators, dispatch){
             var spinnerActionDispatchers = { 
                 increment(delta){
-                    const action = actionCreators.incrment(delta);
+                    const action = actionCreators.increment(delta);
                     dispatch(action);
                 },
                 decrement(delta){
-                    const action = actionCreators.decrment(delta);
+                    const action = actionCreators.decrement(delta);
                     dispatch(action);
                 }
             };
@@ -62,7 +62,8 @@
                 this.props.decrement(this.state.delta);
             }
             render = () => {
-                const { value } = this.props;
+                //const { value } = this.props;
+                const value = this.props.value;
                 return(
                     <React.Fragment>
                         <h1>Spinner</h1>

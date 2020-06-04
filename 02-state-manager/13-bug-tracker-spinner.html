@@ -225,7 +225,7 @@
         /* Using the React-Redux library */
         var ConnectedBugTracker = (function(){
             function mapBugStateToProps(storeState){
-                var bugs = storeState.bugsState;
+                var bugs = storeState.bugsState.filter(bug => bug.id % 2 === storeState.spinnerState % 2);
                 return { bugs : bugs };
             }
 
@@ -267,6 +267,9 @@
             <ReactRedux.Provider store={store}>
                 <div>
                     <ConnectedSpinner />
+                    <br/>
+                    <label>Apply Filter :</label>
+                    <input type="checkbox" />
                     <ConnectedBugTracker/>
                 </div>
             </ReactRedux.Provider>

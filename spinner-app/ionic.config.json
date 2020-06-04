@@ -1,0 +1,7 @@
+{
+  "name": "spinner-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}

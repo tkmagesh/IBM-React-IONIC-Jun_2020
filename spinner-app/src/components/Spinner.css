@@ -1,0 +1,7 @@
+.spinnerContainer{
+    text-align: center;
+}
+
+.spinnerContainer .spinnerValue{
+    font-size: 18pt;
+}

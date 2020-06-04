@@ -1,0 +1,31 @@
+State
+    UI State
+        - for handling UI responsibility
+        - allowed to be maintained in the component state
+
+    Application State
+        - for handling core application logic
+        - NOT allowed to be maintained in the component state
+
+
+State Manager
+    Store (object)
+        * maintain the application state for the whole application
+        * single point of contact to know when the state is changing
+
+        - getState() => state
+        - subscribe(callback)
+        - dispatch(action)
+
+    Reducer (function)
+        * logic for changing the state in the store
+        fn(currentState, action) => currentState / newState
+
+    Action (object)
+        * respresents an user action (typically)
+        { type : 'ADD_NEW_PRODUCT', payload : newProduct }
+
+
+React-Redux
+    connect - to connect the redux infrastructure with the react component
+    Provider - will provide the store to the connected components

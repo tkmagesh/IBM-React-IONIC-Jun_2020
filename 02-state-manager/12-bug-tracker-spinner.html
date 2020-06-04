@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>State Manager - Demo</title>
+    <style>
+        body{ 
+            margin-left: 50px;
+        }
+        section{ 
+            margin-bottom: 10px;
+        }
+        .closed{
+            color : red;
+            text-decoration: line-through;
+            font-style: italic;
+            font-weight: bold;
+        }
+        .stats, .bugname{
+            font-size: 18pt;
+        }
+        .bugname{
+            cursor: pointer;
+        }
+        ol{ 
+            width : 500px;
+            -webkit-padding-start: 0px;
+            list-style: none;
+        }
+        li{ 
+            border : 2px solid gray;
+            background-color: #e7e7e7;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script src="react.development.js"></script>
+    <script src="react-dom.development.js"></script>
+    <script src="babel.min.js"></script>
+    <script src="redux.js"></script>
+
+    <script type="text/babel">
+
+        /* Reducers */
+        function bugsReducer(currentState = [], action){
+            if (action.type === 'ADD_NEW_BUG'){
+                const newState = [...currentState, action.payload];
+                return newState;
+            }
+            if (action.type === 'REPLACE_BUG'){
+                const newState = currentState.map(bug => bug.id === action.payload.id ? action.payload : bug );
+                return newState;
+            }
+            if (action.type === 'REMOVE_BUG'){
+                const newState = currentState.filter(bug => bug.id !== action.payload.id);
+                return newState;
+            }
+            if (action.type === 'REMOVE_BUGS'){
+                const newState = currentState.filter(bug => !action.payload.find(closedBug => closedBug.id === bug.id));
+                return newState;
+            }
+            return currentState;
+        }
+
+        function spinnerReducer(currentState = 0, action){
+            if (action.type === 'INCREMENT') return currentState + action.payload;
+            if (action.type === 'DECREMENT') return currentState - action.payload;
+            if (action.type === 'DOUBLE_INCREMENT') return currentState * 2;
+            if (action.type === 'DOUBLE_DECREMENT') return currentState / 2;
+            return currentState;
+        }
+
+        /* Action Creators */
+        let currentButId = 0;
+        var bugActionCreators = { 
+            addNew(bugName){
+                const newBug = { 
+                    id : ++currentButId, 
+                    name : bugName, 
+                    isClosed : false, 
+                    createdAt : new Date()
+                }
+                const action = { type : 'ADD_NEW_BUG', payload : newBug };
+                return action;
+            },
+            toggle(bugToToggle){
+                const toggledBug = { ...bugToToggle, isClosed : !bugToToggle.isClosed };
+                const action = { type : 'REPLACE_BUG', payload : toggledBug };
+                return action;
+            },
+            remove(bugToRemove){
+                const action = { type : 'REMOVE_BUG', payload : bugToRemove };
+                return action;
+            },
+            /* Passing the currentBugs to the action creator from the UI is a hack.. should not be done in realtime application. This should be replaced with a way by which the action creator can access the current state from the store */
+            removeClosed(currentBugs){
+                const closedBugs = currentBugs.filter(bug => bug.isClosed);
+                const action = { type : 'REMOVE_BUGS', payload : closedBugs };
+                return action;
+            }
+        };
+
+        var spinnerActionCreators = {
+            increment(delta){
+                const action = { type: 'INCREMENT', payload : delta };
+                return action;
+            },
+            decrement(delta){
+                const action = { type: 'DECREMENT', payload : delta };
+                return action;
+            },
+            doubleIncrement(){
+                const action = { type : 'DOUBLE_INCREMENT'};
+                return action;
+            },
+            doubleDecrement(){
+                const action = { type : 'DOUBLE_DECREMENT'};
+                return action;
+            }
+        };
+
+        /* Components */
+
+        const BugStats = ({bugs}) => {
+            const closedCount = bugs.reduce((result, bug) => bug.isClosed ? ++result : result, 0);
+            return (
+                <section className="stats">
+                    <span className="closed">{closedCount}</span>
+                    <span> / </span>
+                    <span>{bugs.length}</span>
+                </section>
+            )
+        };
+
+        const BugSort = () => (
+            <section className="sort">
+                <label htmlFor="">Order By :</label>
+                <select name="" id="">
+                    <option value=""></option>
+                    <option value=""></option>
+                </select>
+                <label htmlFor="">Descending ? :</label>
+                <input type="checkbox" name="" id="" />
+            </section>
+        );
+
+        const BugEdit = ({ addNew }) => {
+            const [newBugName, setNewBugName] = React.useState('');
+            return(
+                <section className="edit">
+                    <label htmlFor="">Bug Name :</label>
+                    <input type="text" onChange={ evt => setNewBugName(evt.target.value) }/>
+                    <input type="button" value="Add New" onClick={ () => addNew(newBugName)} />
+                </section>
+            )
+        }
+
+        const BugList = ({bugs, toggle, remove, removeClosed}) => (
+            <section className="list">
+                <ol>
+                    { bugs.map(bug => <BugItem key={bug.id} bug={bug} toggle={toggle} remove={remove}/>) }
+                </ol>
+                <input type="button" value="Remove Closed" onClick={() => removeClosed(bugs)} />
+            </section>
+        )
+
+        class BugTracker extends React.Component {
+            render = () => {
+                const { bugs, addNew, toggle, remove, removeClosed } = this.props;
+                return(
+                    <React.Fragment>
+                        <h1>Bug Tracker</h1>
+                        <hr/>
+                        <BugStats bugs={bugs} />
+                        <BugSort/>
+                        <BugEdit addNew={addNew} />
+                        <BugList {...{bugs, toggle, remove, removeClosed}} />
+                    </React.Fragment>
+                )
+            }
+        }
+
+        const BugItem = ({bug, toggle, remove}) => {
+            return (
+                <li>
+                    { bug.isClosed ? (<span className="bugname closed" onClick={() => toggle(bug)}>{bug.name}</span>) : (<span className="bugname" onClick={() => toggle(bug)}>{bug.name}</span>)
+                    }
+                    <div className="datetime">{bug.createdAt.toString()}</div>
+                    <input type="button" value="Remove" onClick={() => remove(bug)}/>
+                </li>
+            );
+        }
+
+        const Spinner = ({ value, doubleIncrement, doubleDecrement, increment, decrement }) => {
+            const [ delta, setDelta ] = React.useState(0);
+            return(
+                <React.Fragment>
+                    <h1>Spinner</h1>
+                    <hr/>
+                    <label htmlFor="">Delta : </label>
+                    <input type="number" onChange={ evt => setDelta(evt.target.valueAsNumber) }/>
+                    <br/>
+                    <input type="button" value="Double Decrement" onClick={doubleDecrement} />
+                    <input type="button" value="Decrement" onClick={() => decrement(delta)}/>
+                    <span> [ {value} ] </span>
+                    <input type="button" value="Increment" onClick={() => increment(delta)}/>
+                    <input type="button" value="Double Increment" onClick={doubleIncrement} />
+                </React.Fragment>
+            )
+        };
+        
+
+        /* Store */
+        var rootReducer = Redux.combineReducers({
+            bugsState : bugsReducer,
+            spinnerState : spinnerReducer
+        });
+        var store = Redux.createStore(rootReducer);
+
+        /* Action Dispatchers */
+        var bugActionDispatchers = Redux.bindActionCreators(bugActionCreators, store.dispatch);
+        var spinnerActionDispatchers = Redux.bindActionCreators(spinnerActionCreators, store.dispatch);
+
+        /* Render the applications */
+        function renderApp(){
+            const storeState = store.getState(),
+                bugs = storeState.bugsState,
+                value = storeState.spinnerState;
+
+            ReactDOM.render(
+                <div>
+                    <Spinner value={value} {...spinnerActionDispatchers} />
+                    <BugTracker bugs={bugs} {...bugActionDispatchers}/>
+                </div>
+                , document.getElementById('root'));
+        }
+        renderApp();
+        store.subscribe(renderApp);
+    </script>
+</head>
+<body>
+    <div id="root">
+        
+    </div>
+</body>
+</html>

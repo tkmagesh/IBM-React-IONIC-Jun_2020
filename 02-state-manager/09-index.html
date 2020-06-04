@@ -52,7 +52,7 @@
             }
         }
 
-        class Spinner extends React.Component{
+       /*  class Spinner extends React.Component{
             state = { delta : 0 };
             render = () => {
                 const { value, doubleIncrement, doubleDecrement, increment, decrement } = this.props;
@@ -72,7 +72,26 @@
                     </React.Fragment>
                 )
             }
-        }
+        } */
+
+        const Spinner = ({ value, doubleIncrement, doubleDecrement, increment, decrement }) => {
+            const [ delta, setDelta ] = React.useState(0);
+            return(
+                <React.Fragment>
+                    <h1>Spinner</h1>
+                    <hr/>
+                    <label htmlFor="">Delta : </label>
+                    <input type="number" onChange={ evt => setDelta(evt.target.valueAsNumber) }/>
+                    <br/>
+                    <input type="button" value="Double Decrement" onClick={doubleDecrement} />
+                    <input type="button" value="Decrement" onClick={() => decrement(delta)}/>
+                    <span> [ {value} ] </span>
+                    <input type="button" value="Increment" onClick={() => increment(delta)}/>
+                    <input type="button" value="Double Increment" onClick={doubleIncrement} />
+                </React.Fragment>
+            )
+        };
+        
 
         var actionDispatchers = StateManager.bindActionCreators(spinnerActionCreators, store.dispatch);
         

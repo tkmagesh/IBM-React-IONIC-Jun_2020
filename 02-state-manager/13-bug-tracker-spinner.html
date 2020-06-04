@@ -74,6 +74,11 @@
             return currentState;
         }
 
+        function filterReducer(currentState = false, action){
+            if (action.type === 'APPLY_FILTER') return action.payload;
+            return currentState;
+        }
+
         /* Action Creators */
         let currentButId = 0;
         var bugActionCreators = { 
@@ -122,6 +127,13 @@
                 return action;
             }
         };
+
+        var filterActionCreators = {
+            applyFilter(shouldApply){
+                return { type : 'APPLY_FILTER', payload : shouldApply };
+            }
+        };
+        
 
         /* Components */
 
@@ -196,7 +208,7 @@
             );
         }
 
-        const Spinner = ({ value, doubleIncrement, doubleDecrement, increment, decrement }) => {
+        const Spinner = ({ value, doubleIncrement, doubleDecrement, increment, decrement, applyFilter }) => {
             const [ delta, setDelta ] = React.useState(0);
             return(
                 <React.Fragment>
@@ -210,6 +222,10 @@
                     <span> [ {value} ] </span>
                     <input type="button" value="Increment" onClick={() => increment(delta)}/>
                     <input type="button" value="Double Increment" onClick={doubleIncrement} />
+                    <hr/>
+                    <label>Apply Filter :</label>
+                    <input type="checkbox" onChange={ evt => applyFilter(evt.target.checked)} />
+                    <hr/>
                 </React.Fragment>
             )
         };
@@ -218,14 +234,17 @@
         /* Store */
         var rootReducer = Redux.combineReducers({
             bugsState : bugsReducer,
-            spinnerState : spinnerReducer
+            spinnerState : spinnerReducer,
+            filterState : filterReducer
         });
+        
         var store = Redux.createStore(rootReducer);
 
+        
         /* Using the React-Redux library */
         var ConnectedBugTracker = (function(){
             function mapBugStateToProps(storeState){
-                var bugs = storeState.bugsState.filter(bug => bug.id % 2 === storeState.spinnerState % 2);
+                var bugs = storeState.filterState ? storeState.bugsState.filter(bug => bug.id % 2 === storeState.spinnerState % 2) : storeState.bugsState;  
                 return { bugs : bugs };
             }
 
@@ -258,7 +277,11 @@
 
         var ConnectedSpinner = (() => ReactRedux.connect(
                 ({spinnerState : value}) => ({value}),
-                (dispatch) => Redux.bindActionCreators(spinnerActionCreators, dispatch)
+                (dispatch) => {
+                    var spinnerActionDispatchers = Redux.bindActionCreators(spinnerActionCreators, dispatch);
+                    var filterActionDispatchers = Redux.bindActionCreators(filterActionCreators, dispatch);
+                    return { ...spinnerActionDispatchers, ...filterActionDispatchers };
+                }
             )(Spinner)
         )();
        
@@ -268,8 +291,7 @@
                 <div>
                     <ConnectedSpinner />
                     <br/>
-                    <label>Apply Filter :</label>
-                    <input type="checkbox" />
+                    
                     <ConnectedBugTracker/>
                 </div>
             </ReactRedux.Provider>

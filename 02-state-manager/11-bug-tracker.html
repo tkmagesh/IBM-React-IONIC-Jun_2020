@@ -46,11 +46,19 @@
 
         function bugsReducer(currentState = [], action){
             if (action.type === 'ADD_NEW_BUG'){
-                var newState = [...currentState, action.payload];
+                const newState = [...currentState, action.payload];
                 return newState;
             }
             if (action.type === 'REPLACE_BUG'){
-                var newState = currentState.map(bug => bug.id === action.payload.id ? action.payload : bug );
+                const newState = currentState.map(bug => bug.id === action.payload.id ? action.payload : bug );
+                return newState;
+            }
+            if (action.type === 'REMOVE_BUG'){
+                const newState = currentState.filter(bug => bug.id !== action.payload.id);
+                return newState;
+            }
+            if (action.type === 'REMOVE_BUGS'){
+                const newState = currentState.filter(bug => !action.payload.find(closedBug => closedBug.id === bug.id));
                 return newState;
             }
             return currentState;
@@ -72,6 +80,16 @@
                 const toggledBug = { ...bugToToggle, isClosed : !bugToToggle.isClosed };
                 const action = { type : 'REPLACE_BUG', payload : toggledBug };
                 return action;
+            },
+            remove(bugToRemove){
+                const action = { type : 'REMOVE_BUG', payload : bugToRemove };
+                return action;
+            },
+            /* Passing the currentBugs to the action creator from the UI is a hack.. should not be done in realtime application. This should be replaced with a way by which the action creator can access the current state from the store */
+            removeClosed(currentBugs){
+                const closedBugs = currentBugs.filter(bug => bug.isClosed);
+                const action = { type : 'REMOVE_BUGS', payload : closedBugs };
+                return action;
             }
         };
 
@@ -80,18 +98,22 @@
                 newBugName : '' 
             };
             render = () => {
-                const { bugs, addNew, toggle } = this.props;
+                const { bugs, addNew, toggle, remove, removeClosed } = this.props;
                 const { newBugName } = this.state;
                 const closedCount = bugs.reduce((result, bug) => bug.isClosed ? ++result : result, 0);
                 return(
                     <React.Fragment>
                         <h1>Bug Tracker</h1>
                         <hr/>
+
+                        {/* BugStats */}
                         <section className="stats">
                             <span className="closed">{closedCount}</span>
                             <span> / </span>
                             <span>{bugs.length}</span>
                         </section>
+
+                        {/* BugSort */}
                         <section className="sort">
                             <label htmlFor="">Order By :</label>
                             <select name="" id="">
@@ -101,29 +123,33 @@
                             <label htmlFor="">Descending ? :</label>
                             <input type="checkbox" name="" id="" />
                         </section>
+
+                        {/* BugEdit */}
                         <section className="edit">
                             <label htmlFor="">Bug Name :</label>
                             <input type="text" onChange={ evt => this.setState({newBugName : evt.target.value})}/>
                             <input type="button" value="Add New" onClick={ () => addNew(newBugName)} />
                         </section>
+
+                        {/* BugList */}
                         <section className="list">
                             <ol>
-                                { bugs.map(bug => <BugItem key={bug.id} bug={bug} toggle={toggle}/>) }
+                                { bugs.map(bug => <BugItem key={bug.id} bug={bug} toggle={toggle} remove={remove}/>) }
                             </ol>
-                            <input type="button" value="Remove Closed" />
+                            <input type="button" value="Remove Closed" onClick={() => removeClosed(bugs)} />
                         </section>
                     </React.Fragment>
                 )
             }
         }
 
-        const BugItem = ({bug, toggle}) => {
+        const BugItem = ({bug, toggle, remove}) => {
             return (
                 <li>
                     { bug.isClosed ? (<span className="bugname closed" onClick={() => toggle(bug)}>{bug.name}</span>) : (<span className="bugname" onClick={() => toggle(bug)}>{bug.name}</span>)
                     }
                     <div className="datetime">{bug.createdAt.toString()}</div>
-                    <input type="button" value="Remove" />
+                    <input type="button" value="Remove" onClick={() => remove(bug)}/>
                 </li>
             );
         }

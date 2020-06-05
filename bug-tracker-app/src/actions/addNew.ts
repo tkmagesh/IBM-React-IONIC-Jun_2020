@@ -1,10 +1,19 @@
+import bugApi from '../services/bugApi';
+
 export default function addNew(bugName : any) {
-    const newBug = {
-        id: 0,
-        name: bugName,
-        isClosed: false,
-        createdAt: new Date()
+    return function(dispatch : any){
+        const newBugData = {
+            id: 0,
+            name: bugName,
+            isClosed: false,
+            createdAt: new Date()
+        }
+        bugApi
+            .save(newBugData)
+            .then(newBug => {
+                const action = { type: 'ADD_NEW_BUG', payload: newBug };
+                dispatch(action);
+            })
+        
     }
-    const action = { type: 'ADD_NEW_BUG', payload: newBug };
-    return action;
 }

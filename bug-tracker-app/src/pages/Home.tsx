@@ -62,6 +62,8 @@ import { connect } from 'react-redux';
 }; */
 
 class Home extends React.Component<any>{
+  counter = 1;
+
   refresh = (e: CustomEvent) => {
     setTimeout(() => {
       e.detail.complete();
@@ -70,6 +72,10 @@ class Home extends React.Component<any>{
 
   componentDidMount =() => {
     this.props.load();
+  }
+
+  onCreateNewClick = () => {
+    this.props.addNew('A Dummy bug - ' + ++this.counter)
   }
 
   render = () => {
@@ -93,8 +99,8 @@ class Home extends React.Component<any>{
             </IonTitle>
             </IonToolbar>
           </IonHeader>
-          <IonButton expand="full" color="primary" onClick={_ => null}>Create New</IonButton>
-          {/* <IonButton expand="full" color="primary" onClick={_ => null }>Get Bugs</IonButton> */}
+          <IonButton expand="full" color="primary" onClick={_ => this.onCreateNewClick()}>Create New</IonButton>
+          {/*<IonButton expand="full" color="primary" onClick={_ => null }>Get Bugs</IonButton> */}
           <IonList>
             {this.props.bugs.map((bug:any) => <MessageListItem key={bug.id} bug={bug} />)}
           </IonList>

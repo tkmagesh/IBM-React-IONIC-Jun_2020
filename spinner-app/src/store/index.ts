@@ -1,5 +1,14 @@
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 
 import rootReducer from '../reducers'
 
-export default createStore(rootReducer);
+function loggerMiddleware(store : any){
+    return function(next : any){
+        return function(action : any){
+            console.log(action);
+            next(action);
+        }
+    }
+}
+
+export default createStore(rootReducer, applyMiddleware(loggerMiddleware));

@@ -1,0 +1,7 @@
+{
+  "name": "bug-tracker-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}

@@ -5,3 +5,7 @@
 .spinnerContainer .spinnerValue{
     font-size: 18pt;
 }
+
+input[type=number]{
+    color : #000;
+}

@@ -99,7 +99,7 @@ class Home extends React.Component<any>{
             </IonTitle>
             </IonToolbar>
           </IonHeader>
-          <IonButton expand="full" color="primary" onClick={_ => this.onCreateNewClick()}>Create New</IonButton>
+          <IonButton expand="full" color="primary" onClick={this.onCreateNewClick}>Create New</IonButton>
           {/*<IonButton expand="full" color="primary" onClick={_ => null }>Get Bugs</IonButton> */}
           <IonList>
             {this.props.bugs.map((bug:any) => <MessageListItem key={bug.id} bug={bug} />)}

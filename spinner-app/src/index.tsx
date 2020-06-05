@@ -11,9 +11,15 @@ var { add } = calc; */
 
 //import { add } from './calculator'
 
-import calc from './calculator';
-console.log(calc);
+/* import calc from './calculator';
+console.log(calc); */
 
+import axios from 'axios';
+
+axios
+    .get('http://localhost:3000/tasks')
+    .then(response => response.data)
+    .then(tasks => console.table(tasks));
 
 
 ReactDOM.render(<App />, document.getElementById('root'));
